@@ -1,6 +1,6 @@
 [package]
 name = "ppk-gen"
-version = "0.1.0"
+version = "0.1.1"
 description = "PPK Generator - Pracownicze Plany Kapitałowe"
 authors = ["Piotr Korzuszek"]
 license = ""

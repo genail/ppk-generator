@@ -1,6 +1,7 @@
 import { store, now } from '../mock-store';
 import type { StoredGeneration } from '../mock-store';
 import type { Generation, GenerateResult } from '../../lib/types';
+import { sumMoney } from '../../lib/utils';
 
 export function generate_ppk(args: {
   organizationId: number;
@@ -18,18 +19,10 @@ export function generate_ppk(args: {
       c.period_month === args.month
   );
 
-  const totalEmployeeBasic = contribs
-    .reduce((sum, c) => sum + parseFloat(c.employee_basic || '0'), 0)
-    .toFixed(2);
-  const totalEmployeeAdditional = contribs
-    .reduce((sum, c) => sum + parseFloat(c.employee_additional || '0'), 0)
-    .toFixed(2);
-  const totalEmployerBasic = contribs
-    .reduce((sum, c) => sum + parseFloat(c.employer_basic || '0'), 0)
-    .toFixed(2);
-  const totalEmployerAdditional = contribs
-    .reduce((sum, c) => sum + parseFloat(c.employer_additional || '0'), 0)
-    .toFixed(2);
+  const totalEmployeeBasic = sumMoney(contribs.map(c => c.employee_basic));
+  const totalEmployeeAdditional = sumMoney(contribs.map(c => c.employee_additional));
+  const totalEmployerBasic = sumMoney(contribs.map(c => c.employer_basic));
+  const totalEmployerAdditional = sumMoney(contribs.map(c => c.employer_additional));
 
   const gen: StoredGeneration = {
     id: store.nextGenerationId++,

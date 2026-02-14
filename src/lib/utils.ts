@@ -21,9 +21,33 @@ export function commaToDot(value: string): string {
 
 /** Format money for display with comma decimal */
 export function formatMoney(value: string): string {
-  const num = parseFloat(value);
-  if (isNaN(num)) return '0,00';
-  return num.toFixed(2).replace('.', ',');
+  const cents = toCents(value);
+  const sign = cents < 0 ? '-' : '';
+  const abs = Math.abs(cents);
+  const whole = Math.floor(abs / 100);
+  const frac = String(abs % 100).padStart(2, '0');
+  return `${sign}${whole},${frac}`;
+}
+
+/** Convert a decimal string ("94.38" or "94,38") to integer cents. */
+function toCents(value: string): number {
+  if (!value || value.trim() === '') return 0;
+  const dotValue = value.replace(',', '.');
+  const parts = dotValue.split('.');
+  const whole = parseInt(parts[0], 10) || 0;
+  const frac = parts.length > 1 ? parseInt(parts[1].padEnd(2, '0').slice(0, 2), 10) : 0;
+  const sign = whole < 0 || dotValue.startsWith('-') ? -1 : 1;
+  return sign * (Math.abs(whole) * 100 + frac);
+}
+
+/** Sum an array of decimal strings using integer cents arithmetic. Returns dot notation "X.XX". */
+export function sumMoney(values: string[]): string {
+  const total = values.reduce((acc, v) => acc + toCents(v), 0);
+  const sign = total < 0 ? '-' : '';
+  const abs = Math.abs(total);
+  const whole = Math.floor(abs / 100);
+  const frac = String(abs % 100).padStart(2, '0');
+  return `${sign}${whole}.${frac}`;
 }
 
 /** Validate money string (dot notation), returns error message or null */

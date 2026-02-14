@@ -2,7 +2,7 @@
   import type { ContributionWithMember, GenerateResult } from '../lib/types';
   import { listContributions, upsertContribution, prefillContributions, generatePpk } from '../lib/api';
   import { getCurrentOrg, showToast } from '../lib/stores.svelte';
-  import { POLISH_MONTHS, formatMoney, currentPeriod } from '../lib/utils';
+  import { POLISH_MONTHS, formatMoney, sumMoney, currentPeriod } from '../lib/utils';
   import MoneyInput from '../components/MoneyInput.svelte';
   import SaveIndicator from '../components/SaveIndicator.svelte';
   import GenerationSummary from '../components/GenerationSummary.svelte';
@@ -159,12 +159,13 @@
     return years;
   });
 
-  const totals = $derived(contributions.reduce((acc, c) => ({
-    eb: acc.eb + parseFloat(c.employee_basic || '0'),
-    ea: acc.ea + parseFloat(c.employee_additional || '0'),
-    rb: acc.rb + parseFloat(c.employer_basic || '0'),
-    ra: acc.ra + parseFloat(c.employer_additional || '0'),
-  }), { eb: 0, ea: 0, rb: 0, ra: 0 }));
+  const totals = $derived({
+    eb: sumMoney(contributions.map(c => c.employee_basic)),
+    ea: sumMoney(contributions.map(c => c.employee_additional)),
+    rb: sumMoney(contributions.map(c => c.employer_basic)),
+    ra: sumMoney(contributions.map(c => c.employer_additional)),
+    get all() { return sumMoney([this.eb, this.ea, this.rb, this.ra]); },
+  });
 </script>
 
 <div class="p-6">
@@ -283,19 +284,19 @@
           <tr>
             <td class="px-3 py-2 font-medium text-gray-700">Razem</td>
             <td class="px-3 py-2 text-right font-medium">
-              {formatMoney(totals.eb.toFixed(2))}
+              {formatMoney(totals.eb)}
             </td>
             <td class="px-3 py-2 text-right font-medium">
-              {formatMoney(totals.ea.toFixed(2))}
+              {formatMoney(totals.ea)}
             </td>
             <td class="px-3 py-2 text-right font-medium">
-              {formatMoney(totals.rb.toFixed(2))}
+              {formatMoney(totals.rb)}
             </td>
             <td class="px-3 py-2 text-right font-medium">
-              {formatMoney(totals.ra.toFixed(2))}
+              {formatMoney(totals.ra)}
             </td>
             <td class="px-3 py-2 text-right font-semibold text-gray-900">
-              {formatMoney((totals.eb + totals.ea + totals.rb + totals.ra).toFixed(2))} zł
+              {formatMoney(totals.all)} zł
             </td>
           </tr>
         </tfoot>
