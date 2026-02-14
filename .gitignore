@@ -1,0 +1,36 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+
+# Rust
+src-tauri/target
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.sw?
+
+# Screenshots from testing
+*.png
+
+# Reference files with personal data
+PPK/
+PPK.zip
+
+# Test artifacts
+test-results/
+.playwright-mcp/
+
+# Claude Code local settings
+.claude/

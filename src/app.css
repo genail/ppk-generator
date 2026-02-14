@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    color: #1f2937;
+    background-color: #f9fafb;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  #app {
+    min-height: 100vh;
+    display: flex;
+  }
+}
